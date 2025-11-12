@@ -1,0 +1,1 @@
+curl -X GET -H 'Content-Type: application/json' http://localhost:3000/me/6911d04fc7c4ce502cdaeba0/fsdwer98casw -v

@@ -5,12 +5,13 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
+const port = process.env.PORT || 3000;
+
+// Enable CORS for all routes
+app.use(cors());
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
-
-// Enable CORS for all routes (It is necessary when the backend and frontend are on different domains)
-app.use(cors());
 
 // Connect to MongoDB using the connection string in .env file
 mongoose
@@ -53,6 +54,11 @@ async function validateUser(req, res, next) {
   }
 }
 
+app.get("/me/:userId/:secret", validateUser, async (req, res) => {
+  await User.find({ userId: req.user._id });
+  res.json({ username: req.user.name });
+});
+
 // CRUD routes for Todos scoped to authenticated user
 app.get("/todos/:userId/:secret", validateUser, async (req, res) => {
   const todos = await Todo.find({ userId: req.user._id });
@@ -92,5 +98,7 @@ app.get("/", (req, res) => {
   res.send("Everything looks fine");
 });
 
-const port = process.env.PORT;
-app.listen(port, () => console.log(`API server running on port ${port}`));
+// Start the server
+app.listen(port, () => {
+  console.log(`API server running on port ${port}`);
+});
